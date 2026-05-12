@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intelligence Hub - Master</title>
+    <title>Information HQ - Analist Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -14,9 +14,7 @@
                         'bento-hover': '0 10px 40px rgba(0, 0, 0, 0.08)',
                         'bento-modal': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                     },
-                    borderRadius: {
-                        '4xl': '2rem',
-                    }
+                    borderRadius: { '4xl': '2rem' }
                 }
             }
         }
@@ -25,110 +23,87 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .feed-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .prose p { margin-bottom: 0.75em; }
-        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.75em; }
-        .prose strong { color: #111827; }
-        /* Tab active state styles */
         .tab-active { border-bottom: 2px solid #2563EB; color: #111827; font-weight: bold; }
-        .tab-inactive { color: #6B7280; font-weight: medium; }
+        .tab-inactive { color: #6B7280; }
+        .prose p { margin-bottom: 0.75em; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; }
     </style>
 </head>
 <body class="bg-[#F4F5F7] text-[#1A1A1A] font-sans antialiased selection:bg-blue-200">
     <div class="max-w-[90rem] mx-auto p-4 lg:p-10">
-        <!-- Header Bento -->
-        <header class="bg-white rounded-4xl p-6 lg:p-8 shadow-bento mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-gray-100 relative">
+        <!-- Header -->
+        <header class="bg-white rounded-4xl p-6 lg:p-8 shadow-bento mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-gray-100">
             <div>
-                <h1 class="text-3xl font-black tracking-tighter uppercase italic text-gray-900">Intelligence Hub</h1>
+                <h1 class="text-3xl font-black tracking-tighter uppercase italic text-gray-900">Information HQ</h1>
                 <div class="flex items-center gap-3 mt-1">
                     <p id="current-date" class="text-sm text-gray-500 font-medium"></p>
                     <span id="cache-status" class="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-400"></span>
                 </div>
             </div>
             
-            <div class="w-full lg:w-auto flex flex-col md:flex-row gap-4 items-center">
-                <!-- Zoekbalk -->
-                <div class="relative w-full md:w-80">
-                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="search-input" placeholder="Filter rapportages..." class="w-full pl-11 pr-4 py-3 rounded-2xl border-none bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-400 font-medium">
-                </div>
-
-                <div class="flex gap-2 w-full md:w-auto">
-                    <!-- Toggle Live / Vault -->
-                    <div class="bg-gray-100 p-1 rounded-2xl flex w-full md:w-auto">
-                        <button onclick="setViewMode('live')" id="btn-mode-live" class="flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900">Live Feed</button>
-                        <button onclick="setViewMode('vault')" id="btn-mode-vault" class="flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900">Vault 🔖</button>
+            <div class="w-full lg:w-auto flex flex-col md:flex-row gap-4">
+                <input type="text" id="search-input" placeholder="Filter content..." class="w-full md:w-80 pl-6 pr-4 py-3 rounded-2xl bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium border-none shadow-inner">
+                <div class="flex gap-2">
+                    <div class="bg-gray-100 p-1 rounded-2xl flex">
+                        <button onclick="setViewMode('live')" id="btn-mode-live" class="px-6 py-2 rounded-xl text-xs font-bold uppercase transition-all bg-white shadow-sm">Live Feed</button>
+                        <button onclick="setViewMode('vault')" id="btn-mode-vault" class="px-6 py-2 rounded-xl text-xs font-bold uppercase transition-all text-gray-500">Vault 🔖</button>
                     </div>
-
-                    <!-- Force Sync -->
-                    <button onclick="forceRefresh()" class="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition text-gray-400 hover:text-blue-600 shrink-0" title="Forceer Netwerk Sync">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    </button>
-
-                    <!-- Instellingen (Config & Bronnen) -->
-                    <button onclick="toggleConfigModal()" class="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition text-gray-400 hover:text-gray-900 shrink-0" title="Systeem & Bronnen">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <button onclick="toggleConfigModal()" class="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition text-gray-400" title="Instellingen">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                     </button>
                 </div>
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Main Content -->
             <div class="lg:col-span-3 flex flex-col gap-6">
                 <!-- Filters Control Center -->
-                <div class="bg-white rounded-3xl p-4 lg:p-6 shadow-bento border border-gray-100 flex flex-col gap-4 w-full overflow-hidden relative">
-                    
-                    <!-- 1. TIER FILTER (Deep Dive vs Wire News) -->
+                <div class="bg-white rounded-3xl p-6 shadow-bento border border-gray-100 flex flex-col gap-4">
                     <div class="flex items-center gap-3">
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 hidden md:block w-20">Signaal</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 w-20">Signaal</span>
                         <div class="flex bg-gray-50 p-1 rounded-xl">
-                            <button onclick="setTier('Alle')" id="btn-tier-Alle" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900 border border-gray-200">Mix</button>
-                            <button onclick="setTier('1')" id="btn-tier-1" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent">Deep Dive 📖</button>
-                            <button onclick="setTier('2')" id="btn-tier-2" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent">Wire News ⚡</button>
+                            <button onclick="setTier('Alle')" id="btn-tier-Alle" class="px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white shadow-sm border border-gray-200">Mix</button>
+                            <button onclick="setTier('2')" id="btn-tier-2" class="px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all text-gray-500">⚡ Wire</button>
+                            <button onclick="setTier('1')" id="btn-tier-1" class="px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all text-gray-500">📖 Deep Dive</button>
+                            <button onclick="setTier('3')" id="btn-tier-3" class="px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all text-gray-500">✉️ Substack</button>
                         </div>
                     </div>
-
-                    <!-- 2. CATEGORY FILTER -->
                     <div class="flex items-center gap-3 border-t border-gray-50 pt-4">
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 hidden md:block w-20">Domein</span>
-                        <div id="category-filters" class="flex flex-nowrap gap-2 overflow-x-auto hide-scrollbar w-full pb-1"></div>
-                    </div>
-
-                    <!-- 3. SOURCE FILTER -->
-                    <div id="source-filters-container" class="flex items-center gap-3 border-t border-gray-50 pt-4 transition-all">
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 hidden md:block w-20">Bron</span>
-                        <div id="source-filters" class="flex flex-nowrap gap-2 overflow-x-auto hide-scrollbar w-full pb-1"></div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 w-20">Domein</span>
+                        <div id="category-filters" class="flex flex-nowrap gap-2 overflow-x-auto hide-scrollbar pb-1 w-full"></div>
                     </div>
                 </div>
 
-                <!-- Feed Container -->
                 <div id="feed-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="col-span-full py-24 bg-white rounded-4xl shadow-bento flex items-center justify-center border border-gray-100">
-                        <div class="flex flex-col items-center gap-4">
-                            <svg class="w-8 h-8 text-gray-300 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Netwerk initialiseren...</span>
-                        </div>
-                    </div>
+                    <!-- Cards via JS -->
                 </div>
             </div>
 
+            <!-- Sidebar -->
             <div class="space-y-6">
+                <!-- Status & Vault -->
                 <div class="bg-[#1A1A1A] text-white p-8 rounded-4xl shadow-2xl relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -mr-10 -mt-10"></div>
-                    <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] mb-3 text-gray-400 flex items-center gap-2 relative z-10">
-                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" id="status-dot"></span>
-                        <span id="status-text">Hub Status: Actief</span>
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest mb-3 text-gray-400 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full" id="status-dot"></span>
+                        <span id="status-text">HQ Actief</span>
                     </h3>
-                    <p class="text-[11px] leading-relaxed opacity-90 font-medium relative z-10 mb-4">
-                        Privé-knooppunt voor gecureerde datastromen. Databeheer en verwerking verloopt lokaal ter bescherming van privacy.
-                    </p>
-                    <div class="flex items-center gap-2 text-[10px] uppercase font-bold text-gray-400 border-t border-gray-800 pt-4 relative z-10">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                    <p class="text-[11px] opacity-70 mb-4 font-medium">Lokaal beheer van gecureerde datastromen.</p>
+                    <div class="text-[10px] uppercase font-bold text-gray-400 border-t border-gray-800 pt-4">
                         <span id="vault-count">0 items in Vault</span>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-4xl shadow-bento border border-gray-100 flex flex-col max-h-[600px]">
-                    <h2 class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-50 pb-3 pl-2 shrink-0">Netwerk Index</h2>
+                <!-- Aanbevolen Media (Contextueel) -->
+                <div id="media-sidebar" class="bg-blue-600 text-white p-6 rounded-4xl shadow-bento hidden transition-all duration-500">
+                    <h2 class="text-[10px] font-bold uppercase tracking-widest mb-4 opacity-80">🎧 Aanbevolen Media</h2>
+                    <div id="media-list" class="space-y-4"></div>
+                </div>
+
+                <!-- Netwerk Index -->
+                <div class="bg-white p-6 rounded-4xl shadow-bento border border-gray-100 flex flex-col max-h-[500px]">
+                    <h2 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 border-b pb-3">Netwerk Index</h2>
                     <ul class="space-y-1 overflow-y-auto hide-scrollbar flex-1 pr-1" id="source-list"></ul>
                 </div>
             </div>
@@ -136,578 +111,407 @@
     </div>
 
     <!-- AI Summary Modal -->
-    <div id="ai-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-4xl w-full max-w-2xl shadow-bento-modal border border-gray-100 overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]" id="ai-modal-content">
-            <div class="p-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center shrink-0">
+    <div id="ai-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-4xl w-full max-w-2xl shadow-bento-modal overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="p-6 border-b bg-gray-50 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-blue-100 text-blue-600 rounded-xl">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-900">Analytische Samenvatting</h3>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold" id="summary-source">Bron</p>
-                    </div>
+                    <div class="p-2 bg-blue-100 text-blue-600 rounded-xl">⚡</div>
+                    <h3 class="font-bold text-gray-900" id="summary-source">Samenvatting</h3>
                 </div>
-                <button onclick="closeAIModal()" class="text-gray-400 hover:text-gray-900 transition-colors p-1">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                <button onclick="closeAIModal()" class="text-gray-400 hover:text-gray-900 p-2">✕</button>
             </div>
-            <div class="p-8 overflow-y-auto hide-scrollbar text-sm text-gray-700 leading-relaxed prose flex-1" id="summary-content"></div>
-            <div class="p-4 border-t border-gray-100 bg-white text-right shrink-0">
-                <button onclick="closeAIModal()" class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors">Sluiten</button>
+            <div class="p-8 overflow-y-auto prose text-sm text-gray-700 leading-relaxed" id="summary-content"></div>
+            <div class="p-4 border-t bg-white text-right">
+                <button onclick="closeAIModal()" class="px-6 py-2 bg-gray-100 text-gray-700 text-xs font-bold uppercase rounded-xl">Sluiten</button>
             </div>
         </div>
     </div>
 
-    <!-- Configuratie & Bronbeheer Modal -->
-    <div id="config-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-4xl w-full max-w-2xl shadow-bento-modal border border-gray-100 overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="config-modal-content">
-            
-            <!-- Modal Header met Tabs -->
-            <div class="p-6 border-b border-gray-100 bg-gray-50 shrink-0 pb-0">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-gray-900 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-                        Hub Configuratie
-                    </h3>
-                    <button onclick="toggleConfigModal()" class="text-gray-400 hover:text-gray-900 transition-colors p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+    <!-- Config & Bronbeheer Modal -->
+    <div id="config-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-4xl w-full max-w-2xl shadow-bento-modal overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b bg-gray-50 flex justify-between items-center">
+                <div class="flex gap-6">
+                    <button onclick="switchConfigTab('sources')" id="tab-btn-sources" class="pb-2 tab-active text-sm">Bronbeheer</button>
+                    <button onclick="switchConfigTab('ai')" id="tab-btn-ai" class="pb-2 tab-inactive text-sm">AI Engine</button>
                 </div>
-                
-                <!-- Tabs -->
-                <div class="flex gap-6 text-sm">
-                    <button onclick="switchConfigTab('sources')" id="tab-btn-sources" class="pb-3 tab-active">Bronbeheer</button>
-                    <button onclick="switchConfigTab('ai')" id="tab-btn-ai" class="pb-3 tab-inactive">AI Engine</button>
-                </div>
+                <button onclick="toggleConfigModal()" class="text-gray-400 hover:text-gray-900">✕</button>
             </div>
-
-            <!-- Tab Inhoud -->
-            <div class="p-6 overflow-y-auto hide-scrollbar flex-1 bg-white">
-                
-                <!-- BRONNEN TAB -->
-                <div id="tab-content-sources" class="block space-y-6">
-                    <div>
-                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3 border-b border-gray-100 pb-2">Nieuwe Bron Toevoegen</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                            <input type="text" id="new-feed-name" placeholder="Naam (bijv. The Verge)" class="p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
-                            <input type="text" id="new-feed-cat" placeholder="Categorie (bijv. Tech)" class="p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
-                            <input type="url" id="new-feed-url" placeholder="RSS URL (https://...)" class="p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:ring-2 focus:ring-blue-500 outline-none md:col-span-2">
-                            <div class="md:col-span-2 bg-gray-50 p-2 rounded-xl flex gap-2">
-                                <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border border-gray-200 bg-white cursor-pointer hover:bg-blue-50 transition-colors">
-                                    <input type="radio" name="new-feed-tier" value="1" class="accent-blue-600">
-                                    <span class="text-xs font-bold text-gray-700">Deep Dive 📖</span>
-                                </label>
-                                <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border border-gray-200 bg-white cursor-pointer hover:bg-blue-50 transition-colors">
-                                    <input type="radio" name="new-feed-tier" value="2" checked class="accent-blue-600">
-                                    <span class="text-xs font-bold text-gray-700">Wire News ⚡</span>
-                                </label>
+            <div class="p-6 overflow-y-auto flex-1 bg-white">
+                <div id="tab-content-sources">
+                    <div class="bg-blue-50 p-6 rounded-3xl mb-8">
+                        <h4 class="text-[10px] font-bold uppercase mb-4 text-blue-700 tracking-widest" id="form-title">Nieuwe Bron Toevoegen</h4>
+                        <input type="hidden" id="edit-index" value="-1">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="new-feed-name" placeholder="Naam (bijv. The Verge)" class="p-3 rounded-xl border text-xs outline-none bg-white">
+                            <input type="text" id="new-feed-cat" placeholder="Domein (bijv. Tech)" class="p-3 rounded-xl border text-xs outline-none bg-white">
+                            <input type="url" id="new-feed-url" placeholder="RSS URL (https://...)" class="col-span-2 p-3 rounded-xl border text-xs outline-none bg-white">
+                            <div class="col-span-2 flex gap-2 p-1 bg-gray-100 rounded-xl">
+                                <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border bg-white cursor-pointer"><input type="radio" name="new-feed-tier" value="2" checked><span class="text-[10px] font-bold">⚡ Wire</span></label>
+                                <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border bg-white cursor-pointer"><input type="radio" name="new-feed-tier" value="1"><span class="text-[10px] font-bold">📖 Deep Dive</span></label>
+                                <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border bg-white cursor-pointer"><input type="radio" name="new-feed-tier" value="3"><span class="text-[10px] font-bold">✉️ Substack</span></label>
                             </div>
                         </div>
-                        <button onclick="addCustomFeed()" class="w-full py-2.5 bg-gray-900 hover:bg-black text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-colors">Bron Toevoegen</button>
+                        <div class="flex gap-3 mt-4">
+                            <button onclick="addOrUpdateFeed()" id="btn-save-feed" class="flex-1 py-3 bg-gray-900 text-white text-[10px] font-bold uppercase rounded-xl tracking-widest">Opslaan</button>
+                            <button onclick="resetFeedForm()" id="btn-cancel-edit" class="hidden flex-1 py-3 bg-gray-200 text-gray-700 text-[10px] font-bold uppercase rounded-xl tracking-widest">Annuleren</button>
+                        </div>
                     </div>
-
-                    <div>
-                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3 border-b border-gray-100 pb-2 flex justify-between">
-                            <span>Actieve Netwerkbronnen</span>
-                            <span id="manage-source-count">0</span>
-                        </h4>
-                        <ul id="manage-source-list" class="space-y-2 max-h-60 overflow-y-auto hide-scrollbar pr-2">
-                            <!-- Injected via JS -->
-                        </ul>
-                    </div>
+                    <h4 class="text-[10px] font-bold uppercase text-gray-400 mb-4 tracking-widest">Actieve Bronnen</h4>
+                    <ul id="manage-source-list" class="space-y-2"></ul>
                 </div>
-
-                <!-- AI TAB -->
                 <div id="tab-content-ai" class="hidden space-y-4">
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">De samenvattings-engine vereist een verbinding met een AI provider. Data wordt lokaal in uw browser bewaard.</p>
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">AI Provider</label>
-                        <select id="config-provider" class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none" onchange="updateConfigUI()">
-                            <option value="openai">OpenAI (Aanbevolen, razendsnel)</option>
-                            <option value="ollama">Ollama (100% Lokaal / Offline)</option>
-                        </select>
+                        <label class="text-[10px] font-bold uppercase text-gray-400 block mb-2 tracking-widest">OpenAI API Key (sk-...)</label>
+                        <input type="password" id="config-apikey" placeholder="Plak uw sleutel hier..." class="w-full p-4 rounded-xl border outline-none bg-gray-50">
                     </div>
-                    <div id="config-openai-group">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block mt-4">OpenAI API Key (sk-...)</label>
-                        <input type="password" id="config-apikey" placeholder="Plak uw sleutel hier..." class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div id="config-ollama-group" class="hidden">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block mt-4">Ollama Endpoint URL</label>
-                        <input type="text" id="config-ollama-url" value="http://localhost:11434/api/generate" class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block mt-4">Model Naam</label>
-                        <input type="text" id="config-ollama-model" value="llama3" class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
+                    <button onclick="saveAIConfig()" class="w-full py-3 bg-blue-600 text-white text-[10px] font-bold uppercase rounded-xl tracking-widest">Sleutel Opslaan</button>
                 </div>
-
-            </div>
-            
-            <div class="p-4 border-t border-gray-100 bg-gray-50 text-right shrink-0">
-                <button onclick="saveConfig()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors">Wijzigingen Opslaan & Herladen</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. DEFAULT FEEDS (Tier 1 = Deep Dive 📖, Tier 2 = Wire News ⚡) ---
-        const DEFAULT_FEEDS =[
-            // Wire News (Tier 2)
-            { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?best-topics=world-news&post_type=best', cat: 'Wereld', tier: '2' },
-            { name: 'AP News', url: 'https://rsshub.app/apnews/topics/apf-intlnews', cat: 'Wereld', tier: '2' },
-            { name: 'Financial Times', url: 'https://www.ft.com/?format=rss', cat: 'Financiën', tier: '2' },
-            { name: 'Politico Europe', url: 'https://www.politico.eu/feed/', cat: 'Politiek', tier: '2' },
-            { name: 'Vrij Nederland', url: 'https://www.vn.nl/feed/', cat: 'België & NL', tier: '2' },
-            { name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml', cat: 'Wereld', tier: '2' },
-            { name: 'MIT Tech Review', url: 'https://www.technologyreview.com/feed/', cat: 'Tech', tier: '2' },
-            { name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/index', cat: 'Tech', tier: '2' },
-            { name: '404 Media', url: 'https://www.404media.co/rss/', cat: 'Tech', tier: '2' },
-            { name: 'Euractiv Tech', url: 'https://www.euractiv.com/section/tech/feed/', cat: 'Tech', tier: '2' },
-            { name: 'Eurogamer', url: 'https://www.eurogamer.net/feed', cat: 'Games', tier: '2' },
-            { name: 'GamesIndustry', url: 'https://www.gamesindustry.biz/rss/gamesindustry_news.xml', cat: 'Games', tier: '2' },
-            
-            // Deep Dives / Substacks / Magazines (Tier 1)
-            { name: 'Adam Tooze', url: 'https://adamtooze.substack.com/feed', cat: 'Economie', tier: '1' },
-            { name: 'Noah Smith', url: 'https://noahpinion.substack.com/feed', cat: 'Economie', tier: '1' },
-            { name: 'Branko Milanovic', url: 'https://branko2f7.substack.com/feed', cat: 'Economie', tier: '1' },
-            { name: 'Katrine Marçal', url: 'https://katrinemarcal.substack.com/feed', cat: 'Economie', tier: '1' },
-            { name: 'Gergely Orosz', url: 'https://newsletter.pragmaticengineer.com/feed', cat: 'AI', tier: '1' },
-            { name: 'Nathan Lambert', url: 'https://nathanlambert.substack.com/feed', cat: 'AI', tier: '1' },
-            { name: 'Sebastian Raschka', url: 'https://magazine.sebastianraschka.com/feed', cat: 'AI', tier: '1' },
-            { name: 'Nature News', url: 'https://www.nature.com/nature.rss', cat: 'Wetenschap', tier: '1' },
-            { name: 'Science Magazine', url: 'https://www.science.org/rss/news_current.xml', cat: 'Wetenschap', tier: '1' },
+        // --- 1. DEFAULT CONFIGURATION ---
+        const DEFAULT_FEEDS = [
+            { name: 'De Tijd', url: 'https://www.tijd.be/rss/politiek_belgie.xml', cat: 'België', tier: '2' },
+            { name: 'VRT NWS', url: 'https://vrtnws.be/nl.rss.articles.xml', cat: 'België', tier: '2' },
+            { name: 'Apache', url: 'https://www.apache.be/feed', cat: 'België', tier: '1' },
+            { name: 'Reuters World', url: 'https://www.reutersagency.com/feed/?best-topics=world-news&post_type=best', cat: 'Wereld', tier: '2' },
+            { name: 'Foreign Affairs', url: 'https://www.foreignaffairs.com/rss.xml', cat: 'Wereld', tier: '1' },
+            { name: 'Sinocism', url: 'https://sinocism.com/feed', cat: 'Wereld', tier: '3' },
+            { name: 'Adam Tooze', url: 'https://adamtooze.substack.com/feed', cat: 'Economie', tier: '3' },
+            { name: 'The Economist', url: 'https://www.economist.com/finance-and-economics/rss.xml', cat: 'Economie', tier: '1' },
+            { name: 'Stratechery', url: 'https://stratechery.com/feed/', cat: 'Tech', tier: '3' },
+            { name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml', cat: 'Tech', tier: '2' },
             { name: 'Quanta Magazine', url: 'https://www.quantamagazine.org/feed/', cat: 'Wetenschap', tier: '1' },
-            { name: 'Undark Magazine', url: 'https://undark.org/feed/', cat: 'Wetenschap', tier: '1' },
-            { name: 'JSTOR Daily', url: 'https://daily.jstor.org/feed/', cat: 'Wetenschap', tier: '1' },
-            { name: 'The Atlantic', url: 'https://www.theatlantic.com/feed/all/', cat: 'Cultuur', tier: '1' },
-            { name: 'Aeon', url: 'https://aeon.co/feed.rss', cat: 'Cultuur', tier: '1' },
-            { name: 'De Correspondent', url: 'https://decorrespondent.nl/feeds/rss', cat: 'België & NL', tier: '1' },
-            { name: 'Rob Henderson', url: 'https://robkhenderson.substack.com/feed', cat: 'Cultuur', tier: '1' },
-            { name: 'History Today', url: 'https://www.historytoday.com/feed', cat: 'Geschiedenis', tier: '1' },
-            { name: 'World History', url: 'https://www.worldhistory.org/feeds/articles/', cat: 'Geschiedenis', tier: '1' },
-            { name: 'Heather Cox', url: 'https://heathercoxrichardson.substack.com/feed', cat: 'Geschiedenis', tier: '1' },
-            { name: 'Stuk Rood Vlees', url: 'https://stukroodvlees.nl/feed/', cat: 'Geschiedenis', tier: '1' },
-            { name: 'Ted Gioia', url: 'https://tedgioia.substack.com/feed', cat: 'Cultuur', tier: '1' },
-            { name: 'Resident Advisor', url: 'https://ra.co/rss.xml', cat: 'Muziek', tier: '1' },
-            { name: 'Bandcamp Daily', url: 'https://daily.bandcamp.com/feed/', cat: 'Muziek', tier: '1' },
-            { name: 'Pitchfork', url: 'https://pitchfork.com/rss/news/', cat: 'Muziek', tier: '1' },
-            { name: 'The Wire', url: 'https://www.thewire.co.uk/rss/news/', cat: 'Muziek', tier: '1' },
-            { name: 'Jay Gilbert', url: 'https://jaygilbert.substack.com/feed', cat: 'Muziek', tier: '1' },
-            { name: 'Patrick Klepek', url: 'https://patrickklepek.substack.com/feed', cat: 'Games', tier: '1' },
-            { name: 'George Osborn', url: 'https://georgeosborn.substack.com/feed', cat: 'Games', tier: '1' }
+            { name: 'The Honest Broker', url: 'https://tedgioia.substack.com/feed', cat: 'Cultuur', tier: '3' }
         ];
 
-        // --- 2. GLOBAL STATE ---
-        const API_BASE = "https://api.rss2json.com/v1/api.json?rss_url=";
-        const CACHE_KEY = "intel_hub_data_v2"; // V2 ivm nieuwe Tier structuur
-        const VAULT_KEY = "intel_hub_vault";
-        const CONFIG_KEY = "intel_hub_config";
-        const FEEDS_KEY = "intel_hub_feeds";
-        const CACHE_TTL = 30 * 60 * 1000;
-        
-        let userFeeds = JSON.parse(localStorage.getItem(FEEDS_KEY)) || DEFAULT_FEEDS;
-        let allItems =[];
-        let vaultItems = JSON.parse(localStorage.getItem(VAULT_KEY) || "[]");
-        let appConfig = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{"provider":"openai", "apiKey":"", "ollamaUrl":"http://localhost:11434/api/generate", "ollamaModel":"llama3"}');
-        
-        // Filter States
-        let activeCategory = 'Alle';
-        let activeSource = 'Alle';
-        let activeTier = 'Alle'; // 'Alle', '1' (Deep Dive), '2' (Wire News)
-        let viewMode = 'live'; 
+        const RECOMMENDED_MEDIA = {
+            'Wereld': [
+                { name: 'The Red Line', type: 'Podcast', url: 'https://www.theredlinepodcast.com/' },
+                { name: 'CaspianReport', type: 'YouTube', url: 'https://www.youtube.com/@CaspianReport' }
+            ],
+            'Economie': [
+                { name: 'Odd Lots', type: 'Podcast', url: 'https://www.bloomberg.com/podcasts/odd_lots' },
+                { name: 'Patrick Boyle', type: 'YouTube', url: 'https://www.youtube.com/@PatrickBoyle' }
+            ],
+            'België': [
+                { name: 'De Afspraak op Vrijdag', type: 'Podcast', url: 'https://www.vrt.be/vrtmax/a-z/de-afspraak-op-vrijdag/' }
+            ],
+            'AI': [
+                { name: 'Hard Fork', type: 'Podcast', url: 'https://www.nytimes.com/column/hard-fork' },
+                { name: 'Two Minute Papers', type: 'YouTube', url: 'https://www.youtube.com/@TwoMinutePapers' }
+            ]
+        };
 
-        // --- 3. INITIALIZATION & DATA FETCHING ---
+        // --- 2. GLOBAL STATE ---
+        const FEEDS_KEY = "intel_hub_feeds_v3";
+        const VAULT_KEY = "intel_hub_vault_v3";
+        const CONFIG_KEY = "intel_hub_config_v3";
+        const CACHE_KEY = "intel_hub_cache_v3";
+
+        let userFeeds = JSON.parse(localStorage.getItem(FEEDS_KEY)) || DEFAULT_FEEDS;
+        let vaultItems = JSON.parse(localStorage.getItem(VAULT_KEY)) || [];
+        let appConfig = JSON.parse(localStorage.getItem(CONFIG_KEY)) || { apiKey: "" };
+        let allItems = [];
+        let activeCategory = 'Alle';
+        let activeTier = 'Alle';
+        let viewMode = 'live';
+
+        // --- 3. DATA FETCHING ---
         async function loadFeeds(force = false) {
-            updateVaultCount();
-            renderFilters();
-            
-            const cachedData = localStorage.getItem(CACHE_KEY);
-            if (!force && cachedData) {
-                const parsed = JSON.parse(cachedData);
-                if (Date.now() - parsed.timestamp < CACHE_TTL) {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (!force && cached) {
+                const parsed = JSON.parse(cached);
+                if (Date.now() - parsed.timestamp < 30 * 60 * 1000) {
                     allItems = parsed.items;
-                    document.getElementById('cache-status').innerText = "Gecachet";
-                    filterAndRender();
-                    return;
+                    renderAll(); return;
                 }
             }
 
+            document.getElementById('status-text').innerText = "HQ Status: Syncing...";
             document.getElementById('status-dot').classList.add('animate-pulse');
-            document.getElementById('status-text').innerText = "Status: Synchroniseren...";
-            document.getElementById('cache-status').innerText = "Fetching...";
-            allItems =[];
+            allItems = [];
 
             const fetchPromises = userFeeds.map(async (feed) => {
                 try {
-                    const response = await fetch(API_BASE + encodeURIComponent(feed.url));
-                    const data = await response.json();
-                    if (data.status === 'ok' && data.items) {
-                        data.items.slice(0, 3).forEach(item => {
-                            const rawText = item.content || item.description || '';
-                            const cleanDesc = rawText.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
-                            const pubDate = item.pubDate ? new Date(item.pubDate) : new Date();
-                            
-                            allItems.push({ 
-                                id: item.link,
-                                title: item.title || 'Zonder titel',
+                    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`);
+                    const data = await res.json();
+                    if (data.status === 'ok') {
+                        data.items.slice(0, 5).forEach(item => {
+                            allItems.push({
+                                id: item.link, 
+                                title: item.title, 
                                 link: item.link,
-                                description: item.description ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 200) + '...' : '',
-                                fullText: cleanDesc,
-                                pubDate: pubDate.toISOString(),
-                                formattedDate: pubDate.toLocaleDateString('nl-BE'),
-                                formattedTime: pubDate.toLocaleTimeString('nl-BE', {hour: '2-digit', minute:'2-digit'}),
+                                description: item.description ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 180) + '...' : '',
+                                fullText: item.content || item.description || '',
                                 sourceName: feed.name, 
-                                category: feed.cat,
-                                tier: feed.tier || '2' // Fallback naar wire news
+                                category: feed.cat, 
+                                tier: feed.tier,
+                                pubDate: item.pubDate, 
+                                formattedDate: new Date(item.pubDate).toLocaleDateString('nl-BE')
                             });
                         });
                     }
-                } catch (e) {
-                    console.warn(`Node gefaald: ${feed.name}`);
-                }
+                } catch (e) { console.warn("Mislukt:", feed.name); }
             });
 
             await Promise.allSettled(fetchPromises);
             allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-            
             localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), items: allItems }));
-
+            
+            document.getElementById('status-text').innerText = "HQ Status: Actief";
             document.getElementById('status-dot').classList.remove('animate-pulse');
-            document.getElementById('status-text').innerText = "Status: Actief";
-            document.getElementById('cache-status').innerText = "Live Data";
-            filterAndRender();
+            renderAll();
         }
 
-        // --- 4. UI & FILTERING ---
-        function setViewMode(mode) {
-            viewMode = mode;
-            const btnLive = document.getElementById('btn-mode-live');
-            const btnVault = document.getElementById('btn-mode-vault');
-            
-            if (mode === 'live') {
-                btnLive.className = "flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900";
-                btnVault.className = "flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900";
-            } else {
-                btnVault.className = "flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900";
-                btnLive.className = "flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900";
-            }
+        // --- 4. UI RENDERING ---
+        function renderAll() {
+            renderCategoryFilters();
+            renderMediaSidebar();
             filterAndRender();
-        }
-
-        function setTier(tier) {
-            activeTier = tier;
-            // Update button styles
-            ['Alle', '1', '2'].forEach(t => {
-                const btn = document.getElementById(`btn-tier-${t}`);
-                if(t === tier) {
-                    btn.className = "px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900 border border-gray-200";
-                } else {
-                    btn.className = "px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent";
-                }
-            });
-            filterAndRender();
-        }
-
-        function toggleVault(encodedItem) {
-            const item = JSON.parse(decodeURIComponent(encodedItem));
-            const existsIndex = vaultItems.findIndex(v => v.id === item.id);
-            if (existsIndex > -1) vaultItems.splice(existsIndex, 1);
-            else vaultItems.push(item);
-            
-            localStorage.setItem(VAULT_KEY, JSON.stringify(vaultItems));
+            renderManageSources();
+            renderSourceList();
             updateVaultCount();
-            filterAndRender();
         }
 
-        function updateVaultCount() { document.getElementById('vault-count').innerText = `${vaultItems.length} items in Vault`; }
-
-        function forceRefresh() {
-            if(viewMode === 'vault') setViewMode('live');
-            const container = document.getElementById('feed-content');
-            container.innerHTML = `<div class="col-span-full py-24 bg-white rounded-4xl shadow-bento flex items-center justify-center border border-gray-100"><div class="flex flex-col items-center gap-4"><svg class="w-8 h-8 text-gray-300 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="text-xs font-bold uppercase tracking-widest text-gray-400">Netwerk synchronisatie...</span></div></div>`;
-            loadFeeds(true);
-        }
-
-        function renderFilters() {
-            const categories = ['Alle', ...new Set(userFeeds.map(f => f.cat))];
-            const catContainer = document.getElementById('category-filters');
-            
-            catContainer.innerHTML = categories.map(cat => {
-                const isActive = activeCategory === cat;
-                const activeClasses = isActive ? "bg-[#1A1A1A] text-white shadow-md border-[#1A1A1A]" : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50 hover:text-gray-900";
-                return `<button onclick="setCategory('${cat}')" class="px-4 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${activeClasses}">${cat}</button>`;
+        function renderCategoryFilters() {
+            const cats = ['Alle', ...new Set(userFeeds.map(f => f.cat))];
+            document.getElementById('category-filters').innerHTML = cats.map(cat => {
+                const active = activeCategory === cat;
+                return `<button onclick="activeCategory='${cat}'; renderAll()" class="px-4 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${active ? 'bg-gray-900 text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-50'}">${cat}</button>`;
             }).join('');
+        }
 
-            const relevantFeeds = activeCategory === 'Alle' ? userFeeds : userFeeds.filter(f => f.cat === activeCategory);
-            const sources = ['Alle', ...relevantFeeds.map(f => f.name)];
-            const sourceContainer = document.getElementById('source-filters');
-            const sourceWrapper = document.getElementById('source-filters-container');
+        function renderSourceList() {
+            document.getElementById('source-list').innerHTML = userFeeds.map(f => `
+                <li onclick="activeCategory='${f.cat}'; renderAll()" class="flex justify-between items-center p-2 hover:bg-gray-50 rounded-xl transition-all cursor-pointer group">
+                    <span class="text-xs font-medium truncate group-hover:text-blue-600">${f.name}</span>
+                    <span class="text-[8px] font-bold px-1.5 py-0.5 bg-gray-100 rounded uppercase text-gray-400">${f.cat}</span>
+                </li>
+            `).join('');
+        }
 
-            if (sources.length > 2 || activeCategory === 'Alle') {
-                sourceWrapper.style.display = 'flex';
-                sourceContainer.innerHTML = sources.map(src => {
-                    const isActive = activeSource === src;
-                    const activeClasses = isActive ? "bg-blue-50 text-blue-700 border-blue-200 font-black shadow-sm" : "bg-white text-gray-500 border-transparent hover:border-gray-200 hover:bg-gray-50 font-bold";
-                    return `<button onclick="setSource('${src}')" class="px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-all whitespace-nowrap border ${activeClasses}">${src}</button>`;
-                }).join('');
+        function renderMediaSidebar() {
+            const sidebar = document.getElementById('media-sidebar');
+            const list = document.getElementById('media-list');
+            const media = RECOMMENDED_MEDIA[activeCategory];
+
+            if (activeCategory !== 'Alle' && media) {
+                sidebar.classList.remove('hidden');
+                list.innerHTML = media.map(m => `
+                    <a href="${m.url}" target="_blank" class="block p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all">
+                        <p class="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">${m.type}</p>
+                        <p class="text-xs font-bold">${m.name}</p>
+                    </a>
+                `).join('');
             } else {
-                sourceWrapper.style.display = 'none';
+                sidebar.classList.add('hidden');
             }
-
-            const sidebarContainer = document.getElementById('source-list');
-            sidebarContainer.innerHTML = userFeeds.map(feed => {
-                const isActive = activeSource === feed.name;
-                const activeStyle = isActive ? "bg-gray-100 text-black font-bold" : "text-gray-600 hover:bg-gray-50";
-                const tierIcon = feed.tier === '1' ? '📖' : '⚡';
-                return `<li><button onclick="setSourceFromSidebar('${feed.name}', '${feed.cat}')" class="w-full flex justify-between items-center group cursor-pointer p-2 rounded-xl transition-all ${activeStyle}"><span class="text-xs font-medium truncate pr-2">${feed.name} <span class="opacity-50 text-[10px]">${tierIcon}</span></span><span class="text-[8px] font-bold text-gray-400 bg-white border border-gray-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider flex-shrink-0">${feed.cat}</span></button></li>`;
-            }).join('');
         }
-
-        function setCategory(cat) { activeCategory = cat; activeSource = 'Alle'; renderFilters(); filterAndRender(); }
-        function setSource(src) { activeSource = src; renderFilters(); filterAndRender(); }
-        function setSourceFromSidebar(src, cat) { activeCategory = cat; activeSource = src; document.getElementById('search-input').value = ''; renderFilters(); filterAndRender(); if (window.innerWidth < 1024) document.getElementById('feed-content').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
         function filterAndRender() {
             const term = document.getElementById('search-input').value.toLowerCase();
-            let sourceData = viewMode === 'live' ? allItems : vaultItems;
-
-            const filteredItems = sourceData.filter(item => {
-                const matchesSearch = item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term);
-                const matchesCategory = activeCategory === 'Alle' || item.category === activeCategory;
-                const matchesSource = activeSource === 'Alle' || item.sourceName === activeSource;
-                const matchesTier = activeTier === 'Alle' || item.tier === activeTier;
-                
-                return matchesSearch && matchesCategory && matchesSource && matchesTier;
+            const sourceData = viewMode === 'live' ? allItems : vaultItems;
+            
+            const filtered = sourceData.filter(i => {
+                const matchSearch = i.title.toLowerCase().includes(term) || i.description.toLowerCase().includes(term);
+                const matchCat = activeCategory === 'Alle' || i.category === activeCategory;
+                const matchTier = activeTier === 'Alle' || i.tier === activeTier;
+                return matchSearch && matchCat && matchTier;
             });
 
             const container = document.getElementById('feed-content');
-            if (filteredItems.length === 0) {
-                const msg = viewMode === 'vault' ? "Uw Vault is leeg voor deze selectie." : "Geen rapportages gevonden in deze selectie/tier.";
-                container.innerHTML = `<div class="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-4xl border border-gray-100 shadow-bento"><svg class="w-10 h-10 text-gray-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><span class="text-sm font-medium text-gray-500">${msg}</span><div class="flex gap-2 mt-4"><button onclick="setCategory('Alle'); setTier('Alle');" class="text-[10px] uppercase tracking-widest font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg">Reset Filters</button></div></div>`;
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-20 text-center bg-white rounded-4xl border border-dashed"><p class="text-gray-400 text-sm font-medium">Geen rapportages gevonden.</p></div>`;
                 return;
             }
 
-            container.innerHTML = filteredItems.map(item => {
-                const isVaulted = vaultItems.some(v => v.id === item.id);
-                const vaultIconColor = isVaulted ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 hover:text-yellow-400';
-                const encodedItem = encodeURIComponent(JSON.stringify(item).replace(/'/g, "%27"));
-                const tierIcon = item.tier === '1' ? '📖' : '⚡';
-
+            container.innerHTML = filtered.map(i => {
+                const isVaulted = vaultItems.some(v => v.id === i.id);
+                const tierIcon = i.tier === '1' ? '📖' : (i.tier === '3' ? '✉️' : '⚡');
                 return `
-                <div class="feed-card bg-white p-6 lg:p-7 rounded-3xl border border-gray-100 shadow-bento hover:shadow-bento-hover hover:-translate-y-1 flex flex-col justify-between group min-w-0 relative">
-                    <button onclick="toggleVault('${encodedItem}')" class="absolute top-6 right-6 z-10 transition-colors" title="Save to Vault">
-                        <svg class="w-5 h-5 ${vaultIconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
-                    </button>
+                <div class="feed-card bg-white p-6 rounded-3xl border border-gray-100 shadow-bento hover:-translate-y-1 relative flex flex-col justify-between h-full">
                     <div>
-                        <div class="flex justify-between items-center mb-4 gap-2 pr-8">
-                            <span class="text-[9px] font-black uppercase tracking-wider px-2.5 py-1 bg-gray-50 text-gray-700 rounded-xl border border-gray-200 truncate flex-shrink-0 flex items-center gap-1">${tierIcon} ${item.sourceName}</span>
-                            <span class="text-[9px] text-gray-400 font-bold flex-shrink-0">${item.formattedDate}</span>
+                        <button onclick="toggleVault('${encodeURIComponent(JSON.stringify(i))}')" class="absolute top-6 right-6 ${isVaulted ? 'text-yellow-400' : 'text-gray-300'} hover:text-yellow-400 transition-colors text-xl">★</button>
+                        <div class="mb-4 flex justify-between items-center pr-8">
+                            <span class="text-[9px] font-black uppercase px-2 py-1 bg-gray-50 text-gray-600 rounded-lg border border-gray-100">${tierIcon} ${i.sourceName}</span>
+                            <span class="text-[9px] text-gray-400 font-bold">${i.formattedDate}</span>
                         </div>
-                        <h3 class="font-bold text-[#1A1A1A] text-[1.05rem] leading-snug mb-3 group-hover:text-blue-600 transition-colors break-words pr-2">${item.title}</h3>
-                        <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed font-medium break-words">${item.description}</p>
+                        <h3 class="font-bold text-[1.05rem] leading-snug mb-2 text-gray-900">${i.title}</h3>
+                        <p class="text-xs text-gray-500 line-clamp-3 mb-6 font-medium">${i.description}</p>
                     </div>
-                    <div class="mt-5 pt-4 border-t border-gray-50 flex justify-between items-center">
+                    
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
                         <div class="flex gap-3">
-                            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-800 transition-colors flex items-center gap-1.5">
-                                Lees <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                            <button onclick="generateSummary('${encodedItem}')" class="text-[10px] font-black text-purple-600 uppercase tracking-widest hover:text-purple-800 transition-colors flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Samenvatten
-                            </button>
+                            <a href="${i.link}" target="_blank" class="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-800">Lees</a>
+                            <button onclick="generateSummary('${encodeURIComponent(JSON.stringify(i))}')" class="text-[10px] font-black text-purple-600 uppercase tracking-widest hover:text-purple-800">AI-Scan</button>
                         </div>
-                        <a href="https://archive.is/latest/${encodeURIComponent(item.link)}" target="_blank" rel="noopener noreferrer" class="text-[9px] font-black text-gray-400 hover:text-red-500 uppercase tracking-widest transition-colors flex items-center gap-1.5 bg-gray-50 hover:bg-red-50 px-2.5 py-1.5 rounded-lg border border-transparent hover:border-red-100">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg> Unlock
+                        <a href="https://archive.is/latest/${encodeURIComponent(i.link)}" target="_blank" rel="noopener noreferrer" class="text-[9px] font-black text-gray-400 hover:text-red-500 uppercase tracking-widest flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md border border-transparent hover:border-red-100 transition-all">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                            Unlock
                         </a>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        // --- 5. CONFIGURATIE & BRONBEHEER MODAL ---
-        function toggleConfigModal() {
-            const modal = document.getElementById('config-modal');
-            const content = document.getElementById('config-modal-content');
-            
-            if (modal.classList.contains('hidden')) {
-                document.getElementById('config-provider').value = appConfig.provider;
-                document.getElementById('config-apikey').value = appConfig.apiKey;
-                document.getElementById('config-ollama-url').value = appConfig.ollamaUrl;
-                document.getElementById('config-ollama-model').value = appConfig.ollamaModel;
-                updateConfigUI();
-                renderManageSources(); // Laad bronnenlijst in form
-
-                modal.classList.remove('hidden');
-                setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
-            } else {
-                modal.classList.add('opacity-0'); content.classList.add('scale-95');
-                setTimeout(() => modal.classList.add('hidden'), 300);
-            }
-        }
-
-        function switchConfigTab(tab) {
-            document.getElementById('tab-content-sources').classList.toggle('hidden', tab !== 'sources');
-            document.getElementById('tab-content-ai').classList.toggle('hidden', tab !== 'ai');
-            
-            const btnSources = document.getElementById('tab-btn-sources');
-            const btnAI = document.getElementById('tab-btn-ai');
-            
-            if(tab === 'sources') {
-                btnSources.className = "pb-3 tab-active"; btnAI.className = "pb-3 tab-inactive";
-            } else {
-                btnAI.className = "pb-3 tab-active"; btnSources.className = "pb-3 tab-inactive";
-            }
-        }
-
-        function updateConfigUI() {
-            const provider = document.getElementById('config-provider').value;
-            document.getElementById('config-openai-group').classList.toggle('hidden', provider !== 'openai');
-            document.getElementById('config-ollama-group').classList.toggle('hidden', provider !== 'ollama');
-        }
-
-        // --- BRONNEN BEHEER FUNCTIES ---
+        // --- 5. SOURCE & CONFIG MANAGEMENT ---
         function renderManageSources() {
             const list = document.getElementById('manage-source-list');
-            document.getElementById('manage-source-count').innerText = userFeeds.length;
-            
-            list.innerHTML = userFeeds.map((feed, index) => {
-                const tierLabel = feed.tier === '1' ? '📖 Deep Dive' : '⚡ Wire News';
-                return `
-                <li class="flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-xl">
-                    <div class="flex-1 min-w-0 pr-4">
-                        <p class="text-xs font-bold text-gray-900 truncate">${feed.name}</p>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">${feed.cat} &bull; ${tierLabel}</p>
+            list.innerHTML = userFeeds.map((f, i) => `
+                <li class="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-200">
+                    <div>
+                        <p class="text-xs font-bold text-gray-900">${f.name}</p>
+                        <p class="text-[9px] text-gray-400 uppercase tracking-widest">${f.cat} • Tier ${f.tier}</p>
                     </div>
-                    <button onclick="deleteFeed(${index})" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0" title="Verwijder Bron">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
-                </li>`;
-            }).join('');
+                    <div class="flex gap-1">
+                        <button onclick="editFeed(${i})" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">✎</button>
+                        <button onclick="deleteFeed(${i})" class="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors">✕</button>
+                    </div>
+                </li>
+            `).join('');
         }
 
-        function addCustomFeed() {
+        function editFeed(index) {
+            const f = userFeeds[index];
+            document.getElementById('new-feed-name').value = f.name;
+            document.getElementById('new-feed-cat').value = f.cat;
+            document.getElementById('new-feed-url').value = f.url;
+            document.querySelector(`input[name="new-feed-tier"][value="${f.tier}"]`).checked = true;
+            
+            document.getElementById('edit-index').value = index;
+            document.getElementById('form-title').innerText = "Bron Bewerken";
+            document.getElementById('btn-save-feed').innerText = "Bijwerken";
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+        }
+
+        function resetFeedForm() {
+            document.getElementById('edit-index').value = "-1";
+            document.getElementById('new-feed-name').value = "";
+            document.getElementById('new-feed-cat').value = "";
+            document.getElementById('new-feed-url').value = "";
+            document.getElementById('form-title').innerText = "Nieuwe Bron Toevoegen";
+            document.getElementById('btn-save-feed').innerText = "Opslaan";
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+        }
+
+        function addOrUpdateFeed() {
+            const index = parseInt(document.getElementById('edit-index').value);
             const name = document.getElementById('new-feed-name').value.trim();
             const cat = document.getElementById('new-feed-cat').value.trim();
             const url = document.getElementById('new-feed-url').value.trim();
             const tier = document.querySelector('input[name="new-feed-tier"]:checked').value;
 
-            if(!name || !cat || !url) { alert("Vul aub alle velden in om een bron toe te voegen."); return; }
-            
-            userFeeds.push({ name, url, cat, tier });
-            
-            // Clear inputs
-            document.getElementById('new-feed-name').value = '';
-            document.getElementById('new-feed-cat').value = '';
-            document.getElementById('new-feed-url').value = '';
-            
-            renderManageSources();
-        }
+            if(!name || !cat || !url) return alert("Vul alle velden in.");
 
-        function deleteFeed(index) {
-            if(confirm(`Weet u zeker dat u '${userFeeds[index].name}' wilt verwijderen?`)) {
-                userFeeds.splice(index, 1);
-                renderManageSources();
-            }
-        }
+            const feedObj = { name, cat, url, tier };
+            if (index === -1) userFeeds.push(feedObj);
+            else userFeeds[index] = feedObj;
 
-        function saveConfig() {
-            // Opslaan AI Instellingen
-            appConfig = {
-                provider: document.getElementById('config-provider').value,
-                apiKey: document.getElementById('config-apikey').value.trim(),
-                ollamaUrl: document.getElementById('config-ollama-url').value.trim(),
-                ollamaModel: document.getElementById('config-ollama-model').value.trim()
-            };
-            localStorage.setItem(CONFIG_KEY, JSON.stringify(appConfig));
-            
-            // Opslaan Bronnen
             localStorage.setItem(FEEDS_KEY, JSON.stringify(userFeeds));
-            
-            toggleConfigModal();
-            
-            // Omdat bronnen veranderd kunnen zijn, forceren we een volledige netwerk refresh
-            forceRefresh();
+            resetFeedForm();
+            loadFeeds(true);
         }
 
-        // --- 6. AI SAMENVATTING (Ongewijzigd, werkt met configuratie) ---
-        async function generateSummary(encodedItem) {
-            const item = JSON.parse(decodeURIComponent(encodedItem));
-            
-            if (appConfig.provider === 'openai' && !appConfig.apiKey) {
-                alert("Navigeer naar Instellingen (⚙️ rechtsboven) om een API-sleutel in te vullen.");
-                toggleConfigModal(); switchConfigTab('ai');
-                return;
+        function deleteFeed(i) {
+            if(confirm(`'${userFeeds[i].name}' verwijderen uit netwerk?`)) {
+                userFeeds.splice(i, 1);
+                localStorage.setItem(FEEDS_KEY, JSON.stringify(userFeeds));
+                renderAll();
             }
+        }
+
+        function saveAIConfig() {
+            appConfig.apiKey = document.getElementById('config-apikey').value.trim();
+            localStorage.setItem(CONFIG_KEY, JSON.stringify(appConfig));
+            alert("Sleutel opgeslagen.");
+        }
+
+        // --- 6. AI & UTILS ---
+        async function generateSummary(encoded) {
+            const i = JSON.parse(decodeURIComponent(encoded));
+            if (!appConfig.apiKey) return alert("Vul eerst uw OpenAI API-key in bij instellingen.");
 
             const modal = document.getElementById('ai-modal');
-            const content = document.getElementById('ai-modal-content');
-            const summaryBox = document.getElementById('summary-content');
-            
-            document.getElementById('summary-source').innerText = item.sourceName;
-            summaryBox.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-10 opacity-60">
-                    <svg class="w-8 h-8 text-blue-600 animate-spin mb-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <p class="font-bold tracking-widest uppercase text-xs">Artikel analyseren en samenvatten...</p>
-                </div>
-            `;
+            const summaryContent = document.getElementById('summary-content');
+            document.getElementById('summary-source').innerText = i.sourceName;
             
             modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
-
-            let textToAnalyze = item.fullText || item.description;
-            if(textToAnalyze.length > 12000) textToAnalyze = textToAnalyze.substring(0, 12000); 
-            
-            const systemPrompt = "Je bent een nuchtere, kritische analist. Geef een glasheldere, gestructureerde samenvatting van onderstaande tekst in maximaal 4 tot 5 bullet points. Focus op de kernboodschap, belangrijke feiten en implicaties. Gebruik geen introductie, ga direct naar de bullets.";
-            const userPrompt = `Titel: ${item.title}\n\nTekst: ${textToAnalyze}`;
+            summaryContent.innerHTML = `<div class="flex items-center gap-3 py-10 justify-center"><div class="w-4 h-4 bg-blue-600 animate-ping rounded-full"></div><span class="text-xs font-bold uppercase tracking-widest text-gray-400">Analyseren...</span></div>`;
 
             try {
-                let aiResponseText = "";
-                if (appConfig.provider === 'openai') {
-                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appConfig.apiKey}` },
-                        body: JSON.stringify({
-                            model: "gpt-3.5-turbo",
-                            messages: [ { role: "system", content: systemPrompt }, { role: "user", content: userPrompt } ],
-                            temperature: 0.3
-                        })
-                    });
-                    if (!response.ok) throw new Error("API Fout. Controleer uw sleutel.");
-                    const data = await response.json();
-                    aiResponseText = data.choices[0].message.content;
-
-                } else if (appConfig.provider === 'ollama') {
-                    const response = await fetch(appConfig.ollamaUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ model: appConfig.ollamaModel, system: systemPrompt, prompt: userPrompt, stream: false })
-                    });
-                    if (!response.ok) throw new Error("Ollama onbereikbaar of CORS fout.");
-                    const data = await response.json();
-                    aiResponseText = data.response;
-                }
-
-                const formattedHtml = aiResponseText.split('\n').filter(line => line.trim() !== '').map(line => {
-                    if(line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
-                        let text = line.substring(2).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                        return `<li class="mb-2 pl-1">${text}</li>`;
-                    }
-                    return `<p class="mb-4">${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
-                }).join('');
-
-                summaryBox.innerHTML = `<h4 class="text-lg font-bold text-gray-900 mb-4">${item.title}</h4><ul class="list-disc ml-4">${formattedHtml}</ul>`;
-
-            } catch (error) {
-                summaryBox.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-xl border border-red-100"><strong class="block mb-1">Fout bij genereren samenvatting</strong><span class="text-xs">${error.message}</span></div>`;
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appConfig.apiKey}` },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: [
+                            { role: "system", content: "Je bent een analytische assistent. Vat de tekst samen in 4-5 krachtige, feitelijke bullet points in het Nederlands. Geen inleiding." },
+                            { role: "user", content: `Titel: ${i.title}\n\nTekst: ${i.fullText || i.description}` }
+                        ]
+                    })
+                });
+                const data = await response.json();
+                const text = data.choices[0].message.content;
+                summaryContent.innerHTML = `<h4 class="font-bold text-gray-900 mb-4">${i.title}</h4><div class="space-y-2">${text.split('\n').map(line => line.trim() ? `<p>${line}</p>` : '').join('')}</div>`;
+            } catch (e) {
+                summaryContent.innerHTML = `<p class="text-red-500">Fout bij genereren samenvatting.</p>`;
             }
         }
 
-        function closeAIModal() {
-            const modal = document.getElementById('ai-modal');
-            const content = document.getElementById('ai-modal-content');
-            modal.classList.add('opacity-0'); content.classList.add('scale-95');
-            setTimeout(() => modal.classList.add('hidden'), 300);
+        function toggleVault(encoded) {
+            const i = JSON.parse(decodeURIComponent(encoded));
+            const idx = vaultItems.findIndex(v => v.id === i.id);
+            if (idx > -1) vaultItems.splice(idx, 1);
+            else vaultItems.push(i);
+            localStorage.setItem(VAULT_KEY, JSON.stringify(vaultItems));
+            updateVaultCount();
+            filterAndRender();
         }
 
-        // Init
+        function setTier(t) {
+            activeTier = t;
+            ['Alle', '1', '2', '3'].forEach(id => {
+                const btn = document.getElementById(`btn-tier-${id}`);
+                if(id === t) btn.className = "px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white shadow-sm border border-gray-200";
+                else btn.className = "px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all text-gray-500 hover:text-gray-700";
+            });
+            filterAndRender();
+        }
+
+        function setViewMode(m) {
+            viewMode = m;
+            const liveBtn = document.getElementById('btn-mode-live');
+            const vaultBtn = document.getElementById('btn-mode-vault');
+            if (m === 'live') {
+                liveBtn.className = "px-6 py-2 rounded-xl text-xs font-bold uppercase transition-all bg-white shadow-sm";
+                vaultBtn.className = "px-6 py-2 rounded-xl text-xs font-bold uppercase transition-all text-gray-500";
+            } else {
+                vaultBtn.className = "px-6 py-2 rounded-xl text-xs font-bold uppercase transition-all bg-white shadow-sm";
+                liveBtn.className = "px-6 py-2 rounded-xl text-xs font-bold uppercase transition-all text-gray-500";
+            }
+            filterAndRender();
+        }
+
+        function toggleConfigModal() {
+            document.getElementById('config-modal').classList.toggle('hidden');
+            document.getElementById('config-apikey').value = appConfig.apiKey;
+        }
+
+        function switchConfigTab(t) {
+            document.getElementById('tab-content-sources').classList.toggle('hidden', t !== 'sources');
+            document.getElementById('tab-content-ai').classList.toggle('hidden', t !== 'ai');
+            document.getElementById('tab-btn-sources').className = t === 'sources' ? 'pb-2 tab-active text-sm' : 'pb-2 tab-inactive text-sm';
+            document.getElementById('tab-btn-ai').className = t === 'ai' ? 'pb-2 tab-active text-sm' : 'pb-2 tab-inactive text-sm';
+        }
+
+        function updateVaultCount() { document.getElementById('vault-count').innerText = `${vaultItems.length} items in Vault`; }
+        function closeAIModal() { document.getElementById('ai-modal').classList.add('hidden'); }
+
+        // --- INIT ---
         document.getElementById('search-input').addEventListener('input', filterAndRender);
         document.getElementById('current-date').innerText = new Date().toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         loadFeeds();
