@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Hub - Master Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+    <div class="max-w-7xl mx-auto p-4 lg:p-8">
+        <header class="flex justify-between items-end mb-8 pb-6 border-b border-gray-200">
+            <div>
+                <h1 class="text-3xl font-black text-gray-900 tracking-tighter uppercase italic">Intelligence Hub</h1>
+                <p id="current-date" class="text-sm text-gray-500 font-medium mt-1"></p>
+            </div>
+            <div class="hidden lg:flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                <span class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></span>
+                <span>Bypass Logic Active</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-3">
+                <div id="feed-content" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="col-span-full py-20 text-center font-medium text-gray-400 animate-pulse">Data-pakketten synchroniseren...</div>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-xl border border-gray-800">
+                    <h2 class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-6 border-b border-gray-800 pb-2">Active Network</h2>
+                    <ul class="space-y-3 text-[11px]" id="source-list"></ul>
+                </div>
+                <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
+                    <h3 class="text-xs font-bold uppercase tracking-widest mb-2 text-blue-100">Quick Guide</h3>
+                    <p class="text-[11px] leading-relaxed opacity-90">Gebruik de <strong>Unlock</strong> knop bij bronnen met een harde betaalmuur zoals De Tijd of Financial Times.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FEEDS = [
+            { name: 'De Tijd', url: 'https://www.tijd.be/rss/algemeen.xml' },
+            { name: 'VRT NWS', url: 'https://vrtnws.be/vrtnws.rss.articles.xml' },
+            { name: 'Politico EU', url: 'https://www.politico.eu/feed/' },
+            { name: 'AI Snake Oil', url: 'https://www.aisnakeoil.com/feed' },
+            { name: 'Stratechery', url: 'https://stratechery.com/feed/' },
+            { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?best-topics=world-news&post_type=best' },
+            { name: 'Financial Times', url: 'https://www.ft.com/?format=rss' },
+            { name: 'The Economist', url: 'https://www.economist.com/the-world-this-week/rss.xml' },
+            { name: 'Ground News', url: 'https://ground.news/rss/world' },
+            { name: 'MIT Tech', url: 'https://www.technologyreview.com/feed/' },
+            { name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/index' },
+            { name: 'Ted Gioia', url: 'https://tedgioia.substack.com/feed' },
+            { name: 'Rest is History', url: 'https://feeds.megaphone.fm/the-rest-is-history' }
+        ];
+
+        const API_BASE = "https://api.rss2json.com/v1/api.json?rss_url=";
+
+        async function loadFeeds() {
+            const container = document.getElementById('feed-content');
+            const sourceList = document.getElementById('source-list');
+            container.innerHTML = ""; 
+            const allItems = [];
+
+            for (const feed of FEEDS) {
+                try {
+                    const response = await fetch(API_BASE + encodeURIComponent(feed.url));
+                    const data = await response.json();
+                    if (data.status === 'ok') {
+                        sourceList.innerHTML += `<li class="flex justify-between items-center opacity-70 hover:opacity-100 transition-opacity"><span>${feed.name}</span><span class="text-[8px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded uppercase">On</span></li>`;
+                        data.items.slice(0, 3).forEach(item => {
+                            allItems.push({ ...item, sourceName: feed.name });
+                        });
+                    }
+                } catch (e) {
+                    sourceList.innerHTML += `<li class="flex justify-between text-red-500"><span>${feed.name}</span><span>!</span></li>`;
+                }
+            }
+
+            allItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+            allItems.forEach(item => {
+                const bypassUrl = `https://archive.is/latest/${encodeURIComponent(item.link)}`;
+                const card = `
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[9px] font-black uppercase px-2 py-0.5 bg-gray-900 text-white rounded-sm">${item.sourceName}</span>
+                                <span class="text-[10px] text-gray-400 font-bold">${new Date(item.pubDate).toLocaleTimeString('nl-BE', {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 leading-tight mb-2 group-hover:text-blue-600 transition-colors">${item.title}</h3>
+                            <p class="text-[11px] text-gray-500 line-clamp-2">${item.description.replace(/<[^>]*>?/gm, '')}</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-50 flex gap-3">
+                            <a href="${item.link}" target="_blank" class="text-[10px] font-black text-blue-600 hover:text-gray-900 uppercase tracking-tighter">Lees Origineel</a>
+                            <a href="${bypassUrl}" target="_blank" class="text-[10px] font-black text-red-500 hover:text-red-700 uppercase tracking-tighter border-l border-gray-200 pl-3">Unlock</a>
+                        </div>
+                    </div>`;
+                container.innerHTML += card;
+            });
+        }
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        loadFeeds();
+    </script>
+</body>
+</html>
