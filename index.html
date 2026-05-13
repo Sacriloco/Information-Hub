@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Information HQ - Master</title>
+    <title>Intelligence Hub - Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,12 +28,9 @@
         .prose p { margin-bottom: 0.75em; }
         .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.75em; }
         .prose strong { color: #111827; }
+        /* Tab active state styles */
         .tab-active { border-bottom: 2px solid #2563EB; color: #111827; font-weight: bold; }
         .tab-inactive { color: #6B7280; font-weight: medium; }
-        
-        /* Smooth klapmenu animatie */
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
     </style>
 </head>
 <body class="bg-[#F4F5F7] text-[#1A1A1A] font-sans antialiased selection:bg-blue-200">
@@ -41,7 +38,7 @@
         <!-- Header Bento -->
         <header class="bg-white rounded-4xl p-6 lg:p-8 shadow-bento mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-gray-100 relative">
             <div>
-                <h1 class="text-3xl font-black tracking-tighter uppercase italic text-gray-900">Information HQ</h1>
+                <h1 class="text-3xl font-black tracking-tighter uppercase italic text-gray-900">Intelligence Hub</h1>
                 <div class="flex items-center gap-3 mt-1">
                     <p id="current-date" class="text-sm text-gray-500 font-medium"></p>
                     <span id="cache-status" class="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-400"></span>
@@ -56,15 +53,18 @@
                 </div>
 
                 <div class="flex gap-2 w-full md:w-auto">
+                    <!-- Toggle Live / Vault -->
                     <div class="bg-gray-100 p-1 rounded-2xl flex w-full md:w-auto">
                         <button onclick="setViewMode('live')" id="btn-mode-live" class="flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900">Live Feed</button>
                         <button onclick="setViewMode('vault')" id="btn-mode-vault" class="flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900">Vault 🔖</button>
                     </div>
 
+                    <!-- Force Sync -->
                     <button onclick="forceRefresh()" class="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition text-gray-400 hover:text-blue-600 shrink-0" title="Forceer Netwerk Sync">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
 
+                    <!-- Instellingen (Config & Bronnen) -->
                     <button onclick="toggleConfigModal()" class="p-3 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition text-gray-400 hover:text-gray-900 shrink-0" title="Systeem & Bronnen">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </button>
@@ -77,14 +77,13 @@
                 <!-- Filters Control Center -->
                 <div class="bg-white rounded-3xl p-4 lg:p-6 shadow-bento border border-gray-100 flex flex-col gap-4 w-full overflow-hidden relative">
                     
-                    <!-- 1. TIER FILTER -->
+                    <!-- 1. TIER FILTER (Deep Dive vs Wire News) -->
                     <div class="flex items-center gap-3">
                         <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 hidden md:block w-20">Signaal</span>
-                        <div class="flex bg-gray-50 p-1 rounded-xl overflow-x-auto hide-scrollbar">
-                            <button onclick="setTier('Alle')" id="btn-tier-Alle" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900 border border-gray-200 whitespace-nowrap">Mix</button>
-                            <button onclick="setTier('2')" id="btn-tier-2" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent whitespace-nowrap">⚡ Wire</button>
-                            <button onclick="setTier('1')" id="btn-tier-1" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent whitespace-nowrap">📖 Deep Dive</button>
-                            <button onclick="setTier('3')" id="btn-tier-3" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent whitespace-nowrap">✉️ Substacks</button>
+                        <div class="flex bg-gray-50 p-1 rounded-xl">
+                            <button onclick="setTier('Alle')" id="btn-tier-Alle" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900 border border-gray-200">Mix</button>
+                            <button onclick="setTier('1')" id="btn-tier-1" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent">Deep Dive 📖</button>
+                            <button onclick="setTier('2')" id="btn-tier-2" class="px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent">Wire News ⚡</button>
                         </div>
                     </div>
 
@@ -113,15 +112,14 @@
             </div>
 
             <div class="space-y-6">
-                <!-- Status Box -->
                 <div class="bg-[#1A1A1A] text-white p-8 rounded-4xl shadow-2xl relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] mb-3 text-gray-400 flex items-center gap-2 relative z-10">
                         <span class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" id="status-dot"></span>
-                        <span id="status-text">HQ Status: Actief</span>
+                        <span id="status-text">Hub Status: Actief</span>
                     </h3>
                     <p class="text-[11px] leading-relaxed opacity-90 font-medium relative z-10 mb-4">
-                        Privé-knooppunt voor gecureerde datastromen. Databeheer en verwerking verloopt lokaal.
+                        Privé-knooppunt voor gecureerde datastromen. Databeheer en verwerking verloopt lokaal ter bescherming van privacy.
                     </p>
                     <div class="flex items-center gap-2 text-[10px] uppercase font-bold text-gray-400 border-t border-gray-800 pt-4 relative z-10">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
@@ -129,57 +127,9 @@
                     </div>
                 </div>
 
-                <!-- Network Index -->
-                <div class="bg-white p-6 rounded-4xl shadow-bento border border-gray-100 flex flex-col max-h-[500px]">
+                <div class="bg-white p-6 rounded-4xl shadow-bento border border-gray-100 flex flex-col max-h-[600px]">
                     <h2 class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-50 pb-3 pl-2 shrink-0">Netwerk Index</h2>
                     <ul class="space-y-1 overflow-y-auto hide-scrollbar flex-1 pr-1" id="source-list"></ul>
-                </div>
-
-                <!-- Static Media Recommendations -->
-                <div class="bg-white p-6 rounded-4xl shadow-bento border border-gray-100">
-                    <details class="group cursor-pointer">
-                        <summary class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 list-none flex justify-between items-center outline-none pl-2">
-                            Aanbevolen Media 🎧📺
-                            <svg class="w-4 h-4 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <div class="mt-5 pt-4 border-t border-gray-50 space-y-5 px-2 max-h-[300px] overflow-y-auto hide-scrollbar">
-                            <!-- Geopolitics -->
-                            <div>
-                                <h5 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Wereld & Geopolitiek</h5>
-                                <ul class="space-y-2 text-[11px] font-medium text-gray-600">
-                                    <li><a href="https://www.youtube.com/c/CaspianReport" target="_blank" class="hover:text-blue-600 transition-colors">📺 CaspianReport</a></li>
-                                    <li><a href="https://theredlinepodcast.com/" target="_blank" class="hover:text-blue-600 transition-colors">🎧 The Red Line</a></li>
-                                    <li><a href="https://www.nytimes.com/column/the-daily" target="_blank" class="hover:text-blue-600 transition-colors">🎧 The Daily</a></li>
-                                </ul>
-                            </div>
-                            <!-- Finance -->
-                            <div>
-                                <h5 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Finance & Economy</h5>
-                                <ul class="space-y-2 text-[11px] font-medium text-gray-600">
-                                    <li><a href="https://www.bloomberg.com/oddlots" target="_blank" class="hover:text-blue-600 transition-colors">🎧 Odd Lots (Bloomberg)</a></li>
-                                    <li><a href="https://www.youtube.com/c/PatrickBoyleOnFinance" target="_blank" class="hover:text-blue-600 transition-colors">📺 Patrick Boyle</a></li>
-                                </ul>
-                            </div>
-                            <!-- Society & History -->
-                            <div>
-                                <h5 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Society & History</h5>
-                                <ul class="space-y-2 text-[11px] font-medium text-gray-600">
-                                    <li><a href="https://podcasts.apple.com/gb/podcast/the-rest-is-history/id1537788786" target="_blank" class="hover:text-blue-600 transition-colors">🎧 The Rest is History</a></li>
-                                    <li><a href="https://www.youtube.com/c/inanutshell" target="_blank" class="hover:text-blue-600 transition-colors">📺 Kurzgesagt</a></li>
-                                    <li><a href="https://samharris.org/podcasts/" target="_blank" class="hover:text-blue-600 transition-colors">🎧 Making Sense (Sam Harris)</a></li>
-                                </ul>
-                            </div>
-                            <!-- Tech & Science -->
-                            <div>
-                                <h5 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Tech, AI & Science</h5>
-                                <ul class="space-y-2 text-[11px] font-medium text-gray-600">
-                                    <li><a href="https://www.nytimes.com/column/hard-fork" target="_blank" class="hover:text-blue-600 transition-colors">🎧 Hard Fork (NYT)</a></li>
-                                    <li><a href="https://www.youtube.com/c/TwoMinutePapers" target="_blank" class="hover:text-blue-600 transition-colors">📺 Two Minute Papers</a></li>
-                                    <li><a href="https://www.youtube.com/c/veritasium" target="_blank" class="hover:text-blue-600 transition-colors">📺 Veritasium</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </details>
                 </div>
             </div>
         </div>
@@ -213,52 +163,48 @@
     <div id="config-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-4xl w-full max-w-2xl shadow-bento-modal border border-gray-100 overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="config-modal-content">
             
+            <!-- Modal Header met Tabs -->
             <div class="p-6 border-b border-gray-100 bg-gray-50 shrink-0 pb-0">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-gray-900 flex items-center gap-2">
                         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-                        HQ Configuratie
+                        Hub Configuratie
                     </h3>
                     <button onclick="toggleConfigModal()" class="text-gray-400 hover:text-gray-900 transition-colors p-1">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 
+                <!-- Tabs -->
                 <div class="flex gap-6 text-sm">
                     <button onclick="switchConfigTab('sources')" id="tab-btn-sources" class="pb-3 tab-active">Bronbeheer</button>
                     <button onclick="switchConfigTab('ai')" id="tab-btn-ai" class="pb-3 tab-inactive">AI Engine</button>
                 </div>
             </div>
 
+            <!-- Tab Inhoud -->
             <div class="p-6 overflow-y-auto hide-scrollbar flex-1 bg-white">
                 
                 <!-- BRONNEN TAB -->
                 <div id="tab-content-sources" class="block space-y-6">
-                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3" id="form-title">Bron Toevoegen / Bewerken</h4>
+                    <div>
+                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3 border-b border-gray-100 pb-2">Nieuwe Bron Toevoegen</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                            <input type="text" id="new-feed-name" placeholder="Naam (bijv. The Verge)" class="p-2.5 rounded-xl border border-gray-200 bg-white text-xs focus:ring-2 focus:ring-blue-500 outline-none">
-                            <input type="text" id="new-feed-cat" placeholder="Thema (bijv. Tech)" class="p-2.5 rounded-xl border border-gray-200 bg-white text-xs focus:ring-2 focus:ring-blue-500 outline-none">
-                            <input type="url" id="new-feed-url" placeholder="RSS URL (https://...)" class="p-2.5 rounded-xl border border-gray-200 bg-white text-xs focus:ring-2 focus:ring-blue-500 outline-none md:col-span-2">
-                            <div class="md:col-span-2 flex flex-col md:flex-row gap-2">
-                                <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border border-gray-200 bg-white cursor-pointer hover:bg-blue-50 transition-colors">
-                                    <input type="radio" name="new-feed-tier" value="2" checked class="accent-blue-600">
-                                    <span class="text-[11px] font-bold text-gray-700">⚡ Wire</span>
-                                </label>
+                            <input type="text" id="new-feed-name" placeholder="Naam (bijv. The Verge)" class="p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="text" id="new-feed-cat" placeholder="Categorie (bijv. Tech)" class="p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="url" id="new-feed-url" placeholder="RSS URL (https://...)" class="p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:ring-2 focus:ring-blue-500 outline-none md:col-span-2">
+                            <div class="md:col-span-2 bg-gray-50 p-2 rounded-xl flex gap-2">
                                 <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border border-gray-200 bg-white cursor-pointer hover:bg-blue-50 transition-colors">
                                     <input type="radio" name="new-feed-tier" value="1" class="accent-blue-600">
-                                    <span class="text-[11px] font-bold text-gray-700">📖 Deep Dive</span>
+                                    <span class="text-xs font-bold text-gray-700">Deep Dive 📖</span>
                                 </label>
                                 <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg border border-gray-200 bg-white cursor-pointer hover:bg-blue-50 transition-colors">
-                                    <input type="radio" name="new-feed-tier" value="3" class="accent-blue-600">
-                                    <span class="text-[11px] font-bold text-gray-700">✉️ Substack</span>
+                                    <input type="radio" name="new-feed-tier" value="2" checked class="accent-blue-600">
+                                    <span class="text-xs font-bold text-gray-700">Wire News ⚡</span>
                                 </label>
                             </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="saveCustomFeed()" id="add-feed-btn" class="flex-1 py-2.5 bg-gray-900 hover:bg-black text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-colors">Bron Toevoegen</button>
-                            <button onclick="cancelEdit()" id="cancel-edit-btn" class="hidden px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-colors">Annuleren</button>
-                        </div>
+                        <button onclick="addCustomFeed()" class="w-full py-2.5 bg-gray-900 hover:bg-black text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-colors">Bron Toevoegen</button>
                     </div>
 
                     <div>
@@ -303,74 +249,59 @@
     </div>
 
     <script>
-        // --- 1. DEFAULT FEEDS (V3 TAXONOMY) ---
+        // --- 1. DEFAULT FEEDS (Tier 1 = Deep Dive 📖, Tier 2 = Wire News ⚡) ---
         const DEFAULT_FEEDS =[
-            // 🌍 Geopolitics & World
-            { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?best-topics=world-news&post_type=best', cat: 'World & Geo', tier: '2' },
-            { name: 'AP News', url: 'https://rsshub.app/apnews/topics/apf-intlnews', cat: 'World & Geo', tier: '2' },
-            { name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml', cat: 'World & Geo', tier: '2' },
-            { name: 'Foreign Affairs', url: 'https://www.foreignaffairs.com/rss.xml', cat: 'World & Geo', tier: '1' },
-            { name: 'War on the Rocks', url: 'https://warontherocks.com/feed/', cat: 'World & Geo', tier: '1' },
-            { name: 'ECFR', url: 'https://ecfr.eu/feed/', cat: 'World & Geo', tier: '1' },
-            { name: 'Sinocism', url: 'https://sinocism.com/feed', cat: 'World & Geo', tier: '3' },
-            
-            // 🏛️ Politics
-            { name: 'Politico EU', url: 'https://www.politico.eu/feed/', cat: 'Politics', tier: '2' },
-            { name: 'Euractiv', url: 'https://www.euractiv.com/feed/', cat: 'Politics', tier: '2' },
-            { name: 'Liberal Patriot', url: 'https://www.liberalpatriot.com/feed', cat: 'Politics', tier: '3' },
-            { name: 'Eurointelligence', url: 'https://www.eurointelligence.com/feed', cat: 'Politics', tier: '3' },
-
-            // 🇧🇪 Belgium
-            { name: 'De Tijd', url: 'https://www.tijd.be/rss/algemeen.xml', cat: 'Belgium', tier: '2' },
-            { name: 'VRT NWS', url: 'https://www.vrt.be/vrtnws/nl.rss.articles.xml', cat: 'Belgium', tier: '2' },
-            { name: 'Apache', url: 'https://www.apache.be/rss.xml', cat: 'Belgium', tier: '1' },
-            { name: 'Doorbraak', url: 'https://doorbraak.be/feed/', cat: 'Belgium', tier: '1' },
-
-            // 📈 Finance & Economy
-            { name: 'Financial Times', url: 'https://www.ft.com/?format=rss', cat: 'Finance', tier: '2' },
-            { name: 'The Economist', url: 'https://www.economist.com/the-world-this-week/rss.xml', cat: 'Finance', tier: '1' },
-            { name: 'Chartbook (Tooze)', url: 'https://adamtooze.substack.com/feed', cat: 'Finance', tier: '3' },
-            { name: 'Noahpinion', url: 'https://noahpinion.substack.com/feed', cat: 'Finance', tier: '3' },
-
-            // 🧠 Society
-            { name: 'The Guardian', url: 'https://www.theguardian.com/world/rss', cat: 'Society', tier: '2' },
-            { name: 'Aeon', url: 'https://aeon.co/feed.rss', cat: 'Society', tier: '1' },
-            { name: 'Rob Henderson', url: 'https://robkhenderson.substack.com/feed', cat: 'Society', tier: '3' },
-
-            // 📜 History
-            { name: 'History Today', url: 'https://www.historytoday.com/feed', cat: 'History', tier: '2' },
-            { name: 'JSTOR Daily', url: 'https://daily.jstor.org/feed/', cat: 'History', tier: '1' },
-            { name: 'Heather Cox', url: 'https://heathercoxrichardson.substack.com/feed', cat: 'History', tier: '3' },
-
-            // 🤖 AI
-            { name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/index', cat: 'AI', tier: '2' },
-            { name: 'AI Snake Oil', url: 'https://www.aisnakeoil.com/feed', cat: 'AI', tier: '1' },
-            { name: 'Interconnects', url: 'https://www.interconnects.ai/feed', cat: 'AI', tier: '3' },
-            { name: 'Sebastian Raschka', url: 'https://magazine.sebastianraschka.com/feed', cat: 'AI', tier: '3' },
-
-            // 💻 Tech
-            { name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml', cat: 'Tech', tier: '2' },
-            { name: 'Wired', url: 'https://www.wired.com/feed/rss', cat: 'Tech', tier: '1' },
-            { name: 'Stratechery', url: 'https://stratechery.com/feed/', cat: 'Tech', tier: '3' },
-            { name: 'Pragmatic Engineer', url: 'https://newsletter.pragmaticengineer.com/feed', cat: 'Tech', tier: '3' },
-
-            // 🔬 Science
-            { name: 'Nature News', url: 'https://www.nature.com/nature.rss', cat: 'Science', tier: '2' },
-            { name: 'Quanta', url: 'https://www.quantamagazine.org/feed/', cat: 'Science', tier: '1' },
-            { name: 'Undark', url: 'https://undark.org/feed/', cat: 'Science', tier: '1' },
-
-            // 🎭 Culture, Games, Music
-            { name: 'Ted Gioia', url: 'https://tedgioia.substack.com/feed', cat: 'Culture', tier: '3' },
+            // Wire News (Tier 2)
+            { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?best-topics=world-news&post_type=best', cat: 'Wereld', tier: '2' },
+            { name: 'AP News', url: 'https://rsshub.app/apnews/topics/apf-intlnews', cat: 'Wereld', tier: '2' },
+            { name: 'Financial Times', url: 'https://www.ft.com/?format=rss', cat: 'Financiën', tier: '2' },
+            { name: 'Politico Europe', url: 'https://www.politico.eu/feed/', cat: 'Politiek', tier: '2' },
+            { name: 'Vrij Nederland', url: 'https://www.vn.nl/feed/', cat: 'België & NL', tier: '2' },
+            { name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml', cat: 'Wereld', tier: '2' },
+            { name: 'MIT Tech Review', url: 'https://www.technologyreview.com/feed/', cat: 'Tech', tier: '2' },
+            { name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/index', cat: 'Tech', tier: '2' },
+            { name: '404 Media', url: 'https://www.404media.co/rss/', cat: 'Tech', tier: '2' },
+            { name: 'Euractiv Tech', url: 'https://www.euractiv.com/section/tech/feed/', cat: 'Tech', tier: '2' },
             { name: 'Eurogamer', url: 'https://www.eurogamer.net/feed', cat: 'Games', tier: '2' },
-            { name: 'GamesIndustry', url: 'https://www.gamesindustry.biz/rss/gamesindustry_news.xml', cat: 'Games', tier: '2' }
+            { name: 'GamesIndustry', url: 'https://www.gamesindustry.biz/rss/gamesindustry_news.xml', cat: 'Games', tier: '2' },
+            
+            // Deep Dives / Substacks / Magazines (Tier 1)
+            { name: 'Adam Tooze', url: 'https://adamtooze.substack.com/feed', cat: 'Economie', tier: '1' },
+            { name: 'Noah Smith', url: 'https://noahpinion.substack.com/feed', cat: 'Economie', tier: '1' },
+            { name: 'Branko Milanovic', url: 'https://branko2f7.substack.com/feed', cat: 'Economie', tier: '1' },
+            { name: 'Katrine Marçal', url: 'https://katrinemarcal.substack.com/feed', cat: 'Economie', tier: '1' },
+            { name: 'Gergely Orosz', url: 'https://newsletter.pragmaticengineer.com/feed', cat: 'AI', tier: '1' },
+            { name: 'Nathan Lambert', url: 'https://nathanlambert.substack.com/feed', cat: 'AI', tier: '1' },
+            { name: 'Sebastian Raschka', url: 'https://magazine.sebastianraschka.com/feed', cat: 'AI', tier: '1' },
+            { name: 'Nature News', url: 'https://www.nature.com/nature.rss', cat: 'Wetenschap', tier: '1' },
+            { name: 'Science Magazine', url: 'https://www.science.org/rss/news_current.xml', cat: 'Wetenschap', tier: '1' },
+            { name: 'Quanta Magazine', url: 'https://www.quantamagazine.org/feed/', cat: 'Wetenschap', tier: '1' },
+            { name: 'Undark Magazine', url: 'https://undark.org/feed/', cat: 'Wetenschap', tier: '1' },
+            { name: 'JSTOR Daily', url: 'https://daily.jstor.org/feed/', cat: 'Wetenschap', tier: '1' },
+            { name: 'The Atlantic', url: 'https://www.theatlantic.com/feed/all/', cat: 'Cultuur', tier: '1' },
+            { name: 'Aeon', url: 'https://aeon.co/feed.rss', cat: 'Cultuur', tier: '1' },
+            { name: 'De Correspondent', url: 'https://decorrespondent.nl/feeds/rss', cat: 'België & NL', tier: '1' },
+            { name: 'Rob Henderson', url: 'https://robkhenderson.substack.com/feed', cat: 'Cultuur', tier: '1' },
+            { name: 'History Today', url: 'https://www.historytoday.com/feed', cat: 'Geschiedenis', tier: '1' },
+            { name: 'World History', url: 'https://www.worldhistory.org/feeds/articles/', cat: 'Geschiedenis', tier: '1' },
+            { name: 'Heather Cox', url: 'https://heathercoxrichardson.substack.com/feed', cat: 'Geschiedenis', tier: '1' },
+            { name: 'Stuk Rood Vlees', url: 'https://stukroodvlees.nl/feed/', cat: 'Geschiedenis', tier: '1' },
+            { name: 'Ted Gioia', url: 'https://tedgioia.substack.com/feed', cat: 'Cultuur', tier: '1' },
+            { name: 'Resident Advisor', url: 'https://ra.co/rss.xml', cat: 'Muziek', tier: '1' },
+            { name: 'Bandcamp Daily', url: 'https://daily.bandcamp.com/feed/', cat: 'Muziek', tier: '1' },
+            { name: 'Pitchfork', url: 'https://pitchfork.com/rss/news/', cat: 'Muziek', tier: '1' },
+            { name: 'The Wire', url: 'https://www.thewire.co.uk/rss/news/', cat: 'Muziek', tier: '1' },
+            { name: 'Jay Gilbert', url: 'https://jaygilbert.substack.com/feed', cat: 'Muziek', tier: '1' },
+            { name: 'Patrick Klepek', url: 'https://patrickklepek.substack.com/feed', cat: 'Games', tier: '1' },
+            { name: 'George Osborn', url: 'https://georgeosborn.substack.com/feed', cat: 'Games', tier: '1' }
         ];
 
         // --- 2. GLOBAL STATE ---
         const API_BASE = "https://api.rss2json.com/v1/api.json?rss_url=";
-        const CACHE_KEY = "intel_hub_data_v3"; // Bumped version
+        const CACHE_KEY = "intel_hub_data_v2"; // V2 ivm nieuwe Tier structuur
         const VAULT_KEY = "intel_hub_vault";
         const CONFIG_KEY = "intel_hub_config";
-        const FEEDS_KEY = "intel_hub_feeds_v3"; // Bumped version to force new taxonomy
+        const FEEDS_KEY = "intel_hub_feeds";
         const CACHE_TTL = 30 * 60 * 1000;
         
         let userFeeds = JSON.parse(localStorage.getItem(FEEDS_KEY)) || DEFAULT_FEEDS;
@@ -378,13 +309,13 @@
         let vaultItems = JSON.parse(localStorage.getItem(VAULT_KEY) || "[]");
         let appConfig = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{"provider":"openai", "apiKey":"", "ollamaUrl":"http://localhost:11434/api/generate", "ollamaModel":"llama3"}');
         
+        // Filter States
         let activeCategory = 'Alle';
         let activeSource = 'Alle';
-        let activeTier = 'Alle';
+        let activeTier = 'Alle'; // 'Alle', '1' (Deep Dive), '2' (Wire News)
         let viewMode = 'live'; 
-        let editingFeedIndex = -1; // Status voor feed editor
 
-        // --- 3. DATA FETCHING ---
+        // --- 3. INITIALIZATION & DATA FETCHING ---
         async function loadFeeds(force = false) {
             updateVaultCount();
             renderFilters();
@@ -401,7 +332,7 @@
             }
 
             document.getElementById('status-dot').classList.add('animate-pulse');
-            document.getElementById('status-text').innerText = "HQ Status: Synchroniseren...";
+            document.getElementById('status-text').innerText = "Status: Synchroniseren...";
             document.getElementById('cache-status').innerText = "Fetching...";
             allItems =[];
 
@@ -426,7 +357,7 @@
                                 formattedTime: pubDate.toLocaleTimeString('nl-BE', {hour: '2-digit', minute:'2-digit'}),
                                 sourceName: feed.name, 
                                 category: feed.cat,
-                                tier: feed.tier || '2' 
+                                tier: feed.tier || '2' // Fallback naar wire news
                             });
                         });
                     }
@@ -441,7 +372,7 @@
             localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), items: allItems }));
 
             document.getElementById('status-dot').classList.remove('animate-pulse');
-            document.getElementById('status-text').innerText = "HQ Status: Actief";
+            document.getElementById('status-text').innerText = "Status: Actief";
             document.getElementById('cache-status').innerText = "Live Data";
             filterAndRender();
         }
@@ -464,12 +395,13 @@
 
         function setTier(tier) {
             activeTier = tier;
-            ['Alle', '1', '2', '3'].forEach(t => {
+            // Update button styles
+            ['Alle', '1', '2'].forEach(t => {
                 const btn = document.getElementById(`btn-tier-${t}`);
                 if(t === tier) {
-                    btn.className = "px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900 border border-gray-200 whitespace-nowrap";
+                    btn.className = "px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all bg-white shadow-sm text-gray-900 border border-gray-200";
                 } else {
-                    btn.className = "px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent whitespace-nowrap";
+                    btn.className = "px-5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all text-gray-500 hover:text-gray-900 border border-transparent";
                 }
             });
             filterAndRender();
@@ -525,11 +457,8 @@
             sidebarContainer.innerHTML = userFeeds.map(feed => {
                 const isActive = activeSource === feed.name;
                 const activeStyle = isActive ? "bg-gray-100 text-black font-bold" : "text-gray-600 hover:bg-gray-50";
-                let tierIcon = '⚡';
-                if(feed.tier === '1') tierIcon = '📖';
-                if(feed.tier === '3') tierIcon = '✉️';
-                
-                return `<li><button onclick="setSourceFromSidebar('${feed.name}', '${feed.cat}')" class="w-full flex justify-between items-center group cursor-pointer p-2 rounded-xl transition-all ${activeStyle}"><span class="text-xs font-medium truncate pr-2 flex items-center gap-1.5"><span class="opacity-50 text-[10px]">${tierIcon}</span> ${feed.name}</span><span class="text-[8px] font-bold text-gray-400 bg-white border border-gray-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider flex-shrink-0">${feed.cat}</span></button></li>`;
+                const tierIcon = feed.tier === '1' ? '📖' : '⚡';
+                return `<li><button onclick="setSourceFromSidebar('${feed.name}', '${feed.cat}')" class="w-full flex justify-between items-center group cursor-pointer p-2 rounded-xl transition-all ${activeStyle}"><span class="text-xs font-medium truncate pr-2">${feed.name} <span class="opacity-50 text-[10px]">${tierIcon}</span></span><span class="text-[8px] font-bold text-gray-400 bg-white border border-gray-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider flex-shrink-0">${feed.cat}</span></button></li>`;
             }).join('');
         }
 
@@ -552,7 +481,7 @@
 
             const container = document.getElementById('feed-content');
             if (filteredItems.length === 0) {
-                const msg = viewMode === 'vault' ? "Uw Vault is leeg voor deze selectie." : "Geen rapportages gevonden in deze selectie/signaal.";
+                const msg = viewMode === 'vault' ? "Uw Vault is leeg voor deze selectie." : "Geen rapportages gevonden in deze selectie/tier.";
                 container.innerHTML = `<div class="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-4xl border border-gray-100 shadow-bento"><svg class="w-10 h-10 text-gray-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><span class="text-sm font-medium text-gray-500">${msg}</span><div class="flex gap-2 mt-4"><button onclick="setCategory('Alle'); setTier('Alle');" class="text-[10px] uppercase tracking-widest font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg">Reset Filters</button></div></div>`;
                 return;
             }
@@ -561,10 +490,7 @@
                 const isVaulted = vaultItems.some(v => v.id === item.id);
                 const vaultIconColor = isVaulted ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 hover:text-yellow-400';
                 const encodedItem = encodeURIComponent(JSON.stringify(item).replace(/'/g, "%27"));
-                
-                let tierIcon = '⚡';
-                if(item.tier === '1') tierIcon = '📖';
-                if(item.tier === '3') tierIcon = '✉️';
+                const tierIcon = item.tier === '1' ? '📖' : '⚡';
 
                 return `
                 <div class="feed-card bg-white p-6 lg:p-7 rounded-3xl border border-gray-100 shadow-bento hover:shadow-bento-hover hover:-translate-y-1 flex flex-col justify-between group min-w-0 relative">
@@ -607,8 +533,7 @@
                 document.getElementById('config-ollama-url').value = appConfig.ollamaUrl;
                 document.getElementById('config-ollama-model').value = appConfig.ollamaModel;
                 updateConfigUI();
-                renderManageSources();
-                cancelEdit(); // Zorg dat editor schoon is bij openen
+                renderManageSources(); // Laad bronnenlijst in form
 
                 modal.classList.remove('hidden');
                 setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
@@ -638,97 +563,53 @@
             document.getElementById('config-ollama-group').classList.toggle('hidden', provider !== 'ollama');
         }
 
-        // --- BRONNEN BEHEER FUNCTIES (Inclusief Edit Update) ---
+        // --- BRONNEN BEHEER FUNCTIES ---
         function renderManageSources() {
             const list = document.getElementById('manage-source-list');
             document.getElementById('manage-source-count').innerText = userFeeds.length;
             
             list.innerHTML = userFeeds.map((feed, index) => {
-                let tierLabel = '⚡ Wire';
-                if(feed.tier === '1') tierLabel = '📖 Deep Dive';
-                if(feed.tier === '3') tierLabel = '✉️ Substack';
-
+                const tierLabel = feed.tier === '1' ? '📖 Deep Dive' : '⚡ Wire News';
                 return `
-                <li class="flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-colors">
+                <li class="flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-xl">
                     <div class="flex-1 min-w-0 pr-4">
                         <p class="text-xs font-bold text-gray-900 truncate">${feed.name}</p>
                         <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">${feed.cat} &bull; ${tierLabel}</p>
                     </div>
-                    <div class="flex gap-1">
-                        <button onclick="editFeed(${index})" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors shrink-0" title="Bewerk Bron">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        </button>
-                        <button onclick="deleteFeed(${index})" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0" title="Verwijder Bron">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </div>
+                    <button onclick="deleteFeed(${index})" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0" title="Verwijder Bron">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
                 </li>`;
             }).join('');
         }
 
-        function editFeed(index) {
-            const feed = userFeeds[index];
-            document.getElementById('new-feed-name').value = feed.name;
-            document.getElementById('new-feed-cat').value = feed.cat;
-            document.getElementById('new-feed-url').value = feed.url;
-            document.querySelector(`input[name="new-feed-tier"][value="${feed.tier || '2'}"]`).checked = true;
-
-            editingFeedIndex = index;
-            
-            // UI Update naar Bewerk-modus
-            const btn = document.getElementById('add-feed-btn');
-            btn.innerText = "Bron Bijwerken";
-            btn.classList.replace('bg-gray-900', 'bg-blue-600');
-            btn.classList.replace('hover:bg-black', 'hover:bg-blue-700');
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
-            
-            // Scroll soepel naar boven in de modal
-            document.getElementById('tab-content-sources').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function saveCustomFeed() {
+        function addCustomFeed() {
             const name = document.getElementById('new-feed-name').value.trim();
             const cat = document.getElementById('new-feed-cat').value.trim();
             const url = document.getElementById('new-feed-url').value.trim();
             const tier = document.querySelector('input[name="new-feed-tier"]:checked').value;
 
-            if(!name || !cat || !url) { alert("Vul aub alle velden in om een bron op te slaan."); return; }
+            if(!name || !cat || !url) { alert("Vul aub alle velden in om een bron toe te voegen."); return; }
             
-            if (editingFeedIndex > -1) {
-                // Update bestaande feed
-                userFeeds[editingFeedIndex] = { name, url, cat, tier };
-            } else {
-                // Nieuwe feed
-                userFeeds.push({ name, url, cat, tier });
-            }
+            userFeeds.push({ name, url, cat, tier });
             
-            cancelEdit(); // Reset form & knoppen
-            renderManageSources();
-        }
-
-        function cancelEdit() {
-            editingFeedIndex = -1;
+            // Clear inputs
             document.getElementById('new-feed-name').value = '';
             document.getElementById('new-feed-cat').value = '';
             document.getElementById('new-feed-url').value = '';
-            document.querySelector(`input[name="new-feed-tier"][value="2"]`).checked = true; // reset naar Wire
-
-            const btn = document.getElementById('add-feed-btn');
-            btn.innerText = "Bron Toevoegen";
-            btn.classList.replace('bg-blue-600', 'bg-gray-900');
-            btn.classList.replace('hover:bg-blue-700', 'hover:bg-black');
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            
+            renderManageSources();
         }
 
         function deleteFeed(index) {
             if(confirm(`Weet u zeker dat u '${userFeeds[index].name}' wilt verwijderen?`)) {
                 userFeeds.splice(index, 1);
-                if(editingFeedIndex === index) cancelEdit(); // Als de verwijderde feed momenteel bewerkt werd
                 renderManageSources();
             }
         }
 
         function saveConfig() {
+            // Opslaan AI Instellingen
             appConfig = {
                 provider: document.getElementById('config-provider').value,
                 apiKey: document.getElementById('config-apikey').value.trim(),
@@ -736,13 +617,17 @@
                 ollamaModel: document.getElementById('config-ollama-model').value.trim()
             };
             localStorage.setItem(CONFIG_KEY, JSON.stringify(appConfig));
+            
+            // Opslaan Bronnen
             localStorage.setItem(FEEDS_KEY, JSON.stringify(userFeeds));
             
             toggleConfigModal();
+            
+            // Omdat bronnen veranderd kunnen zijn, forceren we een volledige netwerk refresh
             forceRefresh();
         }
 
-        // --- 6. AI SAMENVATTING ---
+        // --- 6. AI SAMENVATTING (Ongewijzigd, werkt met configuratie) ---
         async function generateSummary(encodedItem) {
             const item = JSON.parse(decodeURIComponent(encodedItem));
             
